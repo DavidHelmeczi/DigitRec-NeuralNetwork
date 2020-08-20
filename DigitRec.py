@@ -4,11 +4,12 @@ from scipy.ndimage import zoom
 import numpy as np
 import win32gui
 from PIL import ImageGrab
-#import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt  #remove "#" to see the processed image
 from tensorflow.keras.models import load_model
 
 model = load_model('final_model.h5')
 
+#feed the image to the NN
 
 def predict_digit(img):
     img = img.resize((28, 28))
@@ -21,52 +22,55 @@ def predict_digit(img):
     img = img / 255.0
     res = model.predict([img])[0]
     #plt.show()
-    return res #np.argmax(res), max(res)
+    return res
 
 
+#find the edges of drawing
 
-felso = also = jobb = bal = 0
+top = bottom = right = left = 0
 
 
 def find_top(img):
     for i in range(0, 28):
         for j in range(0, 28):
             if img[i][j] > 0:
-                felso = i
-                return felso
+                top = i
+                return top
 
 
 def find_bottom(img):
     for i in range(27, -1, -1):
         for j in range(27, -1, -1):
             if img[i][j] > 0:
-                also = i
-                return also
+                bottom = i
+                return bottom
 
 
 def find_left(img):
     for i in range(0, 28):
         for j in range(0, 28):
             if img[j][i] > 0:
-                bal = i
-                return bal
+                left = i
+                return left
 
 
 def find_right(img):
     for i in range(27, -1, -1):
         for j in range(27, -1, -1):
             if img[j][i] > 0:
-                jobb = i
-                return jobb
+                right = i
+                return right
 
+
+#crop and center
 
 def crop_image(img):
-    felso = find_top(img)
-    also = find_bottom(img)
-    bal = find_left(img)
-    jobb = find_right(img)
-    img = img[felso:, bal:]
-    img = img[:-(28 - also), :-(28 - jobb)]
+    top = find_top(img)
+    bottom = find_bottom(img)
+    left = find_left(img)
+    right = find_right(img)
+    img = img[top:, left:]
+    img = img[:-(28 - bottom), :-(28 - right)]
 
     if img.shape[1] < 7 and img.shape[0] < 7:
         img = zoom(img, 4)
@@ -96,6 +100,7 @@ def crop_image(img):
 
     return img
 
+#gui
 
 class App(tk.Tk):
     def __init__(self):
@@ -104,7 +109,7 @@ class App(tk.Tk):
         self.x = self.y = 0
 
         self.canvas = tk.Canvas(self, width=300, height=300, bg="white", cursor="cross")
-        self.label = tk.Label(self, text="Draw a number", font=("Helvetica", 25))
+        self.label = tk.Label(self, text="Draw a digit", font=("Helvetica", 25))
         self.classify_btn = tk.Button(self, text="Recognize", command=self.classify_handwriting)
         self.button_clear = tk.Button(self, text="Clear", command=self.clear_all)
 
