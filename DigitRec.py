@@ -104,9 +104,9 @@ class App(tk.Tk):
         self.x = self.y = 0
 
         self.canvas = tk.Canvas(self, width=300, height=300, bg="white", cursor="cross")
-        self.label = tk.Label(self, text="Rajzolj egy szamot", font=("Helvetica", 25))
-        self.classify_btn = tk.Button(self, text="Felismeres", command=self.classify_handwriting)
-        self.button_clear = tk.Button(self, text="Ujra", command=self.clear_all)
+        self.label = tk.Label(self, text="Draw a number", font=("Helvetica", 25))
+        self.classify_btn = tk.Button(self, text="Recognize", command=self.classify_handwriting)
+        self.button_clear = tk.Button(self, text="Clear", command=self.clear_all)
 
         self.canvas.grid(row=0, column=0, pady=2, sticky=W, )
         self.label.grid(row=0, column=1, pady=2, padx=2)
